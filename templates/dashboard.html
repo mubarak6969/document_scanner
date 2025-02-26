@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analytics Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Analytics Dashboard</h1>
+        
+        <h2>Scans Per User</h2>
+        <table>
+            <tr><th>Username</th><th>Number of Scans</th></tr>
+            {% for stat in scan_stats %}
+                <tr><td>{{ stat[0] }}</td><td>{{ stat[1] }}</td></tr>
+            {% endfor %}
+        </table>
+        
+        <h2>Top Users by Credits</h2>
+        <table>
+            <tr><th>Username</th><th>Credits</th></tr>
+            {% for user in top_users %}
+                <tr><td>{{ user[0] }}</td><td>{{ user[1] }}</td></tr>
+            {% endfor %}
+        </table>
+        
+        <h2>Credit Request Statistics</h2>
+        <table>
+            <tr><th>Status</th><th>Count</th></tr>
+            {% for stat in credit_stats %}
+                <tr><td>{{ stat[0] }}</td><td>{{ stat[1] }}</td></tr>
+            {% endfor %}
+        </table>
+        
+        <div class="nav-links">
+            <a href="/admin/credits">Manage Credits</a> | 
+            <a href="/user/profile">Back to Profile</a> | 
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

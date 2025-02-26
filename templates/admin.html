@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <h2>Credit Requests</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Requested Credits</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            {% for req in requests %}
+                <tr>
+                    <td>{{ req[0] }}</td>
+                    <td>{{ req[1] }}</td>
+                    <td>{{ req[2] }}</td>
+                    <td>{{ req[3] }}</td>
+                    <td>
+                        {% if req[3] == 'pending' %}
+                            <form method="POST">
+                                <input type="hidden" name="request_id" value="{{ req[0] }}">
+                                <button name="action" value="approve">Approve</button>
+                                <button name="action" value="deny">Deny</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="nav-links">
+            <a href="/admin/analytics">View Analytics</a> | 
+            <a href="/user/profile">Back to Profile</a> | 
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

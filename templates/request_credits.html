@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Request Credits</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Request Additional Credits</h1>
+        <form method="POST">
+            <input type="number" name="credits" placeholder="Number of credits" min="1" required>
+            <button type="submit">Submit Request</button>
+        </form>
+        <div class="nav-links">
+            <a href="/user/profile">Back to Profile</a>
+        </div>
+    </div>
+</body>
+</html>
