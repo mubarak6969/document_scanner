@@ -33,10 +33,31 @@
         </table>
         
         <div class="nav-links">
-            <a href="/admin/credits">Manage Credits</a> | 
-            <a href="/user/profile">Back to Profile</a> | 
-            <a href="/logout">Logout</a>
+            <a href="/">Back to Profile</a> | <a href="#" id="logout-link">Logout</a>
         </div>
+        <div id="message" class="message" style="display: none;"></div>
     </div>
+    <script>
+        // Inline JS for dashboard-specific logout
+        function showMessage(text, isSuccess = true) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = 'message ' + (isSuccess ? 'success' : 'error');
+            msg.style.opacity = '1';
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                setTimeout(() => msg.style.display = 'none', 500);
+            }, 3000);
+            msg.style.display = 'block';
+        }
+
+        document.getElementById('logout-link').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const response = await fetch('/logout', { method: 'POST' });
+            const data = await response.json();
+            showMessage(data.message, data.success);
+            if (data.success) setTimeout(() => window.location.href = '/', 1000);  // Redirect to root
+        });
+    </script>
 </body>
 </html>

@@ -14,7 +14,6 @@ body {
     padding: 20px;
 }
 
-/* Container for centering content */
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -25,7 +24,6 @@ body {
     backdrop-filter: blur(5px);
 }
 
-/* Headings */
 h1 {
     font-size: 2.5em;
     color: #26A69A;
@@ -40,7 +38,6 @@ h2 {
     margin: 20px 0 10px;
 }
 
-/* Forms */
 form {
     display: flex;
     flex-direction: column;
@@ -66,7 +63,6 @@ input:focus {
     box-shadow: 0 0 8px #26A69A;
 }
 
-/* Buttons */
 button {
     padding: 12px 20px;
     background: #26A69A;
@@ -83,7 +79,6 @@ button:hover {
     transform: translateY(-2px);
 }
 
-/* Links */
 a {
     color: #26A69A;
     text-decoration: none;
@@ -95,7 +90,6 @@ a:hover {
     color: #FF7043;
 }
 
-/* Navigation Links */
 .nav-links {
     margin-top: 20px;
     text-align: center;
@@ -105,7 +99,6 @@ a:hover {
     margin: 0 15px;
 }
 
-/* Tables */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -132,7 +125,6 @@ tr:hover {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Lists */
 ul {
     list-style: none;
     margin: 20px 0;
@@ -150,7 +142,6 @@ ul li:hover {
     background: rgba(255, 255, 255, 0.15);
 }
 
-/* Specific Page Styles */
 .profile-info p {
     font-size: 1.2em;
     margin: 10px 0;
@@ -159,7 +150,17 @@ ul li:hover {
 .message {
     text-align: center;
     padding: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
     margin: 20px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.message.success {
+    background: rgba(0, 255, 0, 0.3);
+}
+
+.message.error {
+    background: rgba(255, 0, 0, 0.3);
 }
