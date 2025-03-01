@@ -6,7 +6,7 @@ import hashlib
 
 app = Flask(__name__)
 app.secret_key = 'super-secret-key-123'
-app.config['SESSION_PERMANENT'] = False  # Session expires on browser close
+app.config['SESSION_PERMANENT'] = False
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -56,11 +56,6 @@ def reset_credits():
 @app.before_request
 def before_request():
     reset_credits()
-    # Skip static file paths and allowed routes
-    if request.path.startswith('/static') or request.path in ['/', '/auth/login', '/auth/register', '/logout']:
-        return None
-    if 'username' not in session:
-        return redirect(url_for('index'))
 
 @app.route('/')
 def index():
@@ -71,6 +66,9 @@ def index():
     c = conn.cursor()
     c.execute("SELECT username, credits, role FROM users WHERE username = ?", (session['username'],))
     user = c.fetchone()
+    if user is None:  # Handle case where user isn't found
+        session.clear()
+        return render_template('index.html', logged_in=False)
     c.execute("SELECT filename, upload_date FROM documents WHERE user_id = (SELECT id FROM users WHERE username = ?)", (session['username'],))
     scans = c.fetchall()
     c.execute("SELECT cr.id, u.username, cr.requested_credits, cr.status FROM credit_requests cr JOIN users u ON cr.user_id = u.id WHERE cr.status = 'pending'")
@@ -143,24 +141,6 @@ def admin_credits():
     conn.close()
     return jsonify({'success': True, 'message': message})
 
-@app.route('/admin/change_role', methods=['POST'])
-def change_role():
-    if 'role' not in session or session['role'] != 'admin':
-        return jsonify({'success': False, 'message': 'Unauthorized'})
-    target_username = request.form['username']
-    new_role = request.form['role']
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("SELECT id FROM users WHERE username = ?", (target_username,))
-    user = c.fetchone()
-    if user:
-        c.execute("UPDATE users SET role = ? WHERE username = ?", (new_role, target_username))
-        conn.commit()
-        conn.close()
-        return jsonify({'success': True, 'message': f'Role changed to {new_role} for {target_username}'})
-    conn.close()
-    return jsonify({'success': False, 'message': 'User not found'})
-
 @app.route('/scan', methods=['POST'])
 def scan():
     if 'username' not in session:
@@ -209,7 +189,7 @@ def logout():
 @app.route('/admin/analytics')
 def analytics():
     if 'role' not in session or session['role'] != 'admin':
-        return redirect(url_for('index'))  # Updated to redirect
+        return "Unauthorized", 403
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute("SELECT u.username, COUNT(d.id) as scans FROM users u LEFT JOIN documents d ON u.id = d.user_id GROUP BY u.id, u.username")
