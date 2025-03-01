@@ -10,21 +10,21 @@
         {% if not logged_in %}
             <h1>Document Scanner</h1>
             <div id="auth-section">
-                <h2>Login</h2>
                 <form id="login-form">
+                    <h2>Login</h2>
                     <input type="text" name="username" placeholder="Username" required>
                     <input type="password" name="password" placeholder="Password" required>
                     <button type="submit">Login</button>
+                    <p>Not registered? <a href="#" id="show-register">Sign Up</a></p>
                 </form>
-                <p>Not registered? <a href="#" id="show-register">Sign Up</a></p>
                 <div id="register-form" style="display: none;">
                     <h2>Register</h2>
                     <form id="register-submit">
                         <input type="text" name="username" placeholder="Username" required>
                         <input type="password" name="password" placeholder="Password" required>
                         <button type="submit">Register</button>
+                        <p>Back to <a href="#" id="show-login">Login</a></p>
                     </form>
-                    <p>Back to <a href="#" id="show-login">Login</a></p>
                 </div>
             </div>
         {% else %}
@@ -72,6 +72,15 @@
                         </tr>
                     {% endfor %}
                 </table>
+                <h2>Manage User Roles</h2>  <!-- New Role Management Section -->
+                <form id="change-role-form">
+                    <input type="text" name="username" placeholder="Username" required>
+                    <select name="role">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button type="submit">Change Role</button>
+                </form>
             {% endif %}
             <div class="nav-links">
                 {% if role == 'admin' %}<a href="/admin/analytics">Analytics Dashboard</a> | {% endif %}

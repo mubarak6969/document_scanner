@@ -1,15 +1,25 @@
 # Document Scanner System
 
-Welcome to the Document Scanner System! This is a web application where you can sign up, scan text files to find similarities, manage credits, and (for admins) view detailed analytics—all with a sleek, modern design. This guide assumes you’re new to coding and uses Windows with PowerShell, walking you through setup from scratch.
+Welcome to the Document Scanner System! This is a web application where you can sign up, scan text files to find similarities, manage credits, and (for admins) view analytics and manage roles—all with a professional, responsive design that fits all devices without scrolling.
+
+----
+
+This repository includes:
+1. **README.md**: Setup instructions (below).
+2. **Code Files**:
+   - **Frontend**: `templates/index.html` (main app), `templates/dashboard.html` (analytics), `static/css/style.css` (styling), `static/js/script.js` (client-side logic).
+   - **Backend**: `app.py` (Flask app).
+   - **Database**: `database.db` (SQLite, created on first run).
+3. **Test Data**: Sample documents in `uploads/` for testing similarity matching.
 
 ---
 
 ## What This Project Does
 - **Sign Up & Log In**: Create an account or log in (first user is an admin).
-- **Credit System**: Get 20 free scans daily; request more credits if needed (admins approve/deny inline).
+- **Credit System**: 20 free scans daily; request more credits if needed (admins approve/deny).
 - **Scan Documents**: Upload `.txt` files (1 credit per scan) and see matches instantly.
-- **Analytics Dashboard**: Admins can view stats (scans per user, top credits, request statuses) on a dedicated page.
-- **Design**: Gradient backgrounds, glassmorphism, teal/orange accents, and inline messages for a smooth experience.
+- **Admin Features**: Approve/deny credits, change user roles, view analytics (scans, credits, requests).
+- **Design**: Professional, centered layout with navy blue accents, fits all devices without scrolling.
 
 ---
 
@@ -40,13 +50,13 @@ Python runs the app.
    - See `Python 3.11.5` (or similar)? You’re good! If not, restart PowerShell and retry.
 
 ### 2. Get the Project Files
-Download the code from GitHub.
-1. In your browser, go to [this project’s GitHub page](#) (replace with your URL after pushing).
+Download the code from this GitHub repository.
+1. In your browser, go to [this project’s GitHub page](https://github.com/yourusername/document-scanner) (replace with your repo URL).
 2. Click the green “Code” button → “Download ZIP”.
 3. Save it (e.g., to Desktop), then right-click → “Extract All” → extract to `C:\Users\YourName\Desktop\document_scanner`.
 4. In PowerShell:
    - Type `cd C:\Users\YourName\Desktop\document_scanner` (use your username) and press Enter.
-   - Type `dir` to see files like `app.py`, `static/`, `templates/`.
+   - Type `dir` to see files like `app.py`, `static/`, `templates/`, `uploads/`.
 
 ### 3. Set Up a Virtual Environment
 This keeps the app’s tools separate.
@@ -69,45 +79,57 @@ Start the web app!
    - Type `python app.py` and press Enter.
    - See `* Running on http://127.0.0.1:5000`? It’s working!
 2. Open your browser, go to `http://127.0.0.1:5000`.
-3. You’ll see a login page with a dark gradient and cool design.
+3. You’ll see a login page with a centered, professional design.
 
 ### 6. Use the App
 - **Register**: Click “Sign Up”, enter a username (e.g., `testuser`) and password (e.g., `1234`). First user is admin!
 - **Log In**: Use those details—see “Login successful!” and your profile.
-- **Scan**: Upload a `.txt` file (e.g., “Hello world” in Notepad), see matches inline.
+- **Scan**: Use test data in `uploads/` or upload new `.txt` files (e.g., “Hello world”), see matches.
 - **Request Credits**: Enter a number, click “Request Credits”, see “Credit request sent!”.
-- **Admin Features**: As admin, approve/deny requests inline, or click “Analytics Dashboard” for stats.
-- **Logout**: Click “Logout”, see “Logout successful!”, return to login.
+- **Admin Features**: As admin, approve/deny credits, change user roles (e.g., make `testuser` an admin), view analytics.
+- **Logout**: Click “Logout”, return to login.
 
 Stop the app with `Ctrl + C` in PowerShell.
+
+---
+
+## Test Data
+The `uploads/` folder contains predefined test documents to try the similarity matching feature:
+- `test1.txt`: "This is a test document for checking similarity."
+- `test2.txt`: "This is a similar test document for checking." (similar to test1.txt for matching).
+- `test3.txt`: "Completely different content for testing." (different to show no match).
+
+### How to Use Test Data
+1. Log in as a user (e.g., `testuser`).
+2. Go to "Scan a Document", upload `test1.txt`, then `test2.txt` → See high similarity match (due to Levenshtein distance).
+3. Upload `test3.txt` → See no match (below 70% similarity).
 
 ---
 
 ## Troubleshooting
 - **“python is not recognized”**: Reinstall Python with “Add to PATH” checked.
 - **No Styling**: Ensure `static/css/style.css` exists; clear browser cache (`Ctrl + Shift + Delete`).
-- **“403 Unauthorized”**: Log in as admin to access analytics.
+- **“403 Unauthorized”**: Log in as admin to access analytics/role management.
+- **JavaScript Errors**: Check browser console (`F12`), ensure `static/js/script.js` exists.
 
 ---
 
-## Test Data
-- Create `.txt` files in Notepad:
-  - `test1.txt`: “This is a test.”
-  - `test2.txt`: “This is a similar test.”
-- Upload via “Scan a Document” to test matching.
-
----
-
-## Tech Details
-- **Frontend**: HTML (`index.html` for main app, `dashboard.html` for analytics), CSS (styling), JavaScript (dynamic updates in `script.js`).
-- **Backend**: Python with Flask (`app.py`).
-- **Database**: SQLite (`database.db`) for users, scans, and requests.
-- **Files**: Uploaded `.txt` files saved in `uploads/`.
+## Code Files Overview
+- **Frontend**:
+  - `templates/index.html`: Main app (login, signup, profile, scans, credits, admin features).
+  - `templates/dashboard.html`: Admin analytics dashboard.
+  - `static/css/style.css`: Professional styling, centered, fits all devices without scrolling.
+  - `static/js/script.js`: Client-side logic (switching, form submissions, role changes).
+- **Backend**:
+  - `app.py`: Flask app handling routes, logic, and database.
+- **Database**:
+  - `database.db`: SQLite database (created on first run) for users, documents, credit requests.
 
 ---
 
 ## Notes
-- Change `app.secret_key` in `app.py` to something unique (e.g., `mysecretkey`) for security.
+- Change `app.secret_key` in `app.py` to something unique for security.
 - This is a local project—runs on your computer, not online.
+- Test on different devices (desktop, tablet, mobile) to verify responsive design.
 
 Enjoy exploring the Document Scanner System!

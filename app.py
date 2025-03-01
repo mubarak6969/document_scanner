@@ -5,7 +5,8 @@ from datetime import datetime
 import hashlib
 
 app = Flask(__name__)
-app.secret_key = 'super-secret-key-123'  # Change this to something unique
+app.secret_key = 'super-secret-key-123'
+app.config['SESSION_PERMANENT'] = False  # Session expires on browser close
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -55,26 +56,16 @@ def reset_credits():
 @app.before_request
 def before_request():
     reset_credits()
-
-def levenshtein_distance(s1, s2):
-    if len(s1) < len(s2):
-        return levenshtein_distance(s2, s1)
-    if len(s2) == 0:
-        return len(s1)
-    previous_row = range(len(s2) + 1)
-    for i, c1 in enumerate(s1):
-        current_row = [i + 1]
-        for j, c2 in enumerate(s2):
-            insertions = previous_row[j + 1] + 1
-            deletions = current_row[j] + 1
-            substitutions = previous_row[j] + (c1 != c2)
-            current_row.append(min(insertions, deletions, substitutions))
-        previous_row = current_row
-    return previous_row[-1]
+    # Skip static file paths and allowed routes
+    if request.path.startswith('/static') or request.path in ['/', '/auth/login', '/auth/register', '/logout']:
+        return None
+    if 'username' not in session:
+        return redirect(url_for('index'))
 
 @app.route('/')
 def index():
     if 'username' not in session:
+        session.clear()
         return render_template('index.html', logged_in=False)
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
@@ -152,6 +143,24 @@ def admin_credits():
     conn.close()
     return jsonify({'success': True, 'message': message})
 
+@app.route('/admin/change_role', methods=['POST'])
+def change_role():
+    if 'role' not in session or session['role'] != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'})
+    target_username = request.form['username']
+    new_role = request.form['role']
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute("SELECT id FROM users WHERE username = ?", (target_username,))
+    user = c.fetchone()
+    if user:
+        c.execute("UPDATE users SET role = ? WHERE username = ?", (new_role, target_username))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': f'Role changed to {new_role} for {target_username}'})
+    conn.close()
+    return jsonify({'success': False, 'message': 'User not found'})
+
 @app.route('/scan', methods=['POST'])
 def scan():
     if 'username' not in session:
@@ -200,7 +209,7 @@ def logout():
 @app.route('/admin/analytics')
 def analytics():
     if 'role' not in session or session['role'] != 'admin':
-        return "Unauthorized", 403
+        return redirect(url_for('index'))  # Updated to redirect
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     c.execute("SELECT u.username, COUNT(d.id) as scans FROM users u LEFT JOIN documents d ON u.id = d.user_id GROUP BY u.id, u.username")
@@ -211,6 +220,22 @@ def analytics():
     credit_stats = c.fetchall()
     conn.close()
     return render_template('dashboard.html', scan_stats=scan_stats, top_users=top_users, credit_stats=credit_stats)
+
+def levenshtein_distance(s1, s2):
+    if len(s1) < len(s2):
+        return levenshtein_distance(s2, s1)
+    if len(s2) == 0:
+        return len(s1)
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+    return previous_row[-1]
 
 if __name__ == '__main__':
     init_db()

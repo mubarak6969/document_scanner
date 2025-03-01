@@ -111,10 +111,19 @@ document.querySelectorAll('.deny-btn')?.forEach(btn => {
     });
 });
 
+document.getElementById('change-role-form')?.addEventListener('submit', async (e) => {  // New handler
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const response = await fetch('/admin/change_role', { method: 'POST', body: formData });
+    const data = await response.json();
+    showMessage(data.message, data.success);
+    if (data.success) e.target.reset();
+});
+
 document.getElementById('logout-link')?.addEventListener('click', async (e) => {
     e.preventDefault();
     const response = await fetch('/logout', { method: 'POST' });
     const data = await response.json();
     showMessage(data.message, data.success);
-    if (data.success) setTimeout(() => location.reload(), 1000);
+    if (data.success) setTimeout(() => window.location.href = '/', 1000);  // Updated to redirect
 });
